@@ -1,4 +1,4 @@
-# metalsmith-transformer
+# metalsmith-transformer ![Build status](https://travis-ci.org/HolyMeekrob/metalsmith-transformer.svg?branch=master)
 
 A Metalsmith plugin to modify files with a given string manipulation
 function. This library is essentially a convenience for building your own
