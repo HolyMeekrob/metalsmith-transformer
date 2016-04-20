@@ -1,5 +1,5 @@
 {
-	"name": "node",
+	"name": "metalsmith-transformer",
 	"version": "1.0.0",
 	"description": "Metalsmith plugin to transform file contents",
 	"main": "lib/index.js",
