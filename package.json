@@ -10,7 +10,7 @@
 		"metalsmith",
 		"metalsmith-plugin"
 	],
-	"author": "Andy Steinberg",
+	"author": "Andy Steinberg <holy.meekrob@gmail.com> (http://www.epicaricacy.com/)",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/HolyMeekrob/metalsmith-transformer.git"
