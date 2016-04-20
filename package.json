@@ -1,18 +1,22 @@
 {
-  "name": "node",
-  "version": "1.0.0",
-  "description": "Metalsmith plugin to transform file contents",
-  "main": "lib/index.js",
-  "scripts": {
-    "test": "tape test/index.js"
-  },
-  "keywords": [
-    "metalsmith",
-    "metalsmith-plugin"
-  ],
-  "author": "Andy Steinberg",
-  "license": "MIT",
-  "devDependencies": {
-    "tape": "^4.5.1"
-  }
+	"name": "node",
+	"version": "1.0.0",
+	"description": "Metalsmith plugin to transform file contents",
+	"main": "lib/index.js",
+	"scripts": {
+		"test": "tape test/index.js"
+	},
+	"keywords": [
+		"metalsmith",
+		"metalsmith-plugin"
+	],
+	"author": "Andy Steinberg",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/HolyMeekrob/metalsmith-transformer.git"
+	},
+	"license": "MIT",
+	"devDependencies": {
+		"tape": "^4.5.1"
+	}
 }
