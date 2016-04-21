@@ -17,18 +17,79 @@ const getFiles = () => {
 	}
 };
 
-test('no transformer function', (assert) => {
-	assert.throws(() => transformer()(), 'throws an error');
-	assert.end();
-});
+test('no configuration', (assert) => {
+	const filesOriginal = getFiles();
+	const filesModified = getFiles();
+	
+	let doneCalled = false;
+	let err = undefined;
+	const done = (e) => {
+		err = e;
+		doneCalled = true;
+	}
 
-test('null transformer function', (assert) => {
-	assert.throws(() => transformer()(null), 'throws an error');
+	transformer()(filesModified, undefined, done);
+
+	Object.keys(filesOriginal).forEach((key) => {
+		assert.equal(filesModified.hasOwnProperty(key), true, 'paths are not modified');
+		assert.equal(filesModified[key].contents.toString(),
+			filesOriginal[key].contents.toString(),
+			'defaults to identity function and default encoding');
+	});
+
+	assert.equal(doneCalled, true, 'done() was called');
+	assert.equal(err, undefined, 'done was not given an error')
 	assert.end();
 });
 
 test('transformer is not a function', (assert) => {
-	assert.throws(() => transformer()(1), 'throws an error');
+	const config = {
+		transformer: 1
+	};
+	
+	const files = getFiles();
+
+	let err = undefined;
+	const done = (e) => {
+		err = e;
+	};
+
+	transformer(config)(files, undefined, done);
+	assert.notEqual(err, undefined, 'done was called with an error');
+	assert.end();
+});
+
+test('unsupported decoding', (assert) => {
+	const config = {
+		decoding: 'invalid'
+	};
+
+	const files = getFiles();
+
+	let err = undefined;
+	const done = (e) => {
+		err = e;
+	};
+
+	transformer(config)(files, undefined, done);
+	assert.notEqual(err, undefined, 'done was called with an error');
+	assert.end();
+});
+
+test('unsupported encoding', (assert) => {
+	const config = {
+		encoding: 'invalid'
+	};
+
+	const files = getFiles();
+
+	let err = undefined;
+	const done = (e) => {
+		err = e;
+	};
+
+	transformer(config)(files, undefined, done);
+	assert.notEqual(err, undefined, 'done was called with an error');
 	assert.end();
 });
 
@@ -37,13 +98,19 @@ test('given a transformer function', (assert) => {
 	const filesModified = getFiles();
 
 	const f = (str) => `${str}!`;
+	
+	const config = {
+		transformer: f
+	};
 
 	let doneCalled = false;
-	const done = () => {
+	let err = undefined;
+	const done = (e) => {
+		err = e;
 		doneCalled = true;
 	};
 
-	transformer(f)(filesModified, undefined, done)
+	transformer(config)(filesModified, undefined, done);
 
 	Object.keys(filesOriginal).forEach((key) => {
 		assert.equal(filesModified.hasOwnProperty(key), true, 'paths are not modified');
@@ -53,5 +120,84 @@ test('given a transformer function', (assert) => {
 	});
 
 	assert.equal(doneCalled, true, 'done() was called');
+	assert.equal(err, undefined, 'done was not given an error')
+	assert.end();
+});
+
+test('given a decoding', (assert) => {
+	const filename = 'file.html';
+	const getFile = () => {
+		const file = { };
+			file[filename] = {
+				contents: new Buffer('file one')
+		};
+		return file;
+	};
+
+	const fileOriginal = getFile();
+	const fileModified = getFile();
+	
+	const decoding = 'base64';
+	
+	let decodedStr = undefined;
+	const t = (str) => {
+		decodedStr = str;
+		return str;
+	}
+
+	const config = {
+		transformer: t,
+		decoding: decoding
+	};
+
+	let doneCalled = false;
+	let err = undefined;
+	const done = (e) => {
+		err = e;
+		doneCalled = true;
+	};
+
+	transformer(config)(fileModified, undefined, done);
+
+	assert.equal(decodedStr, fileOriginal[filename].contents.toString(decoding),
+		'transformer received a string using the decoding');
+	assert.equal(doneCalled, true, 'done() was called');
+	assert.equal(err, undefined, 'done was not given an error')
+	assert.end();
+});
+
+test('given an encoding', (assert) => {
+	const filename = 'file.html';
+	const getFile = () => {
+		const file = { };
+			file[filename] = {
+				contents: new Buffer('file one')
+		};
+		return file;
+	};
+
+	const fileOriginal = getFile();
+	const fileModified = getFile();
+	
+	const encoding = 'ucs2';
+
+	const config = {
+		encoding: encoding
+	};
+
+	let doneCalled = false;
+	let err = undefined;
+	const done = (e) => {
+		err = e;
+		doneCalled = true;
+	};
+
+	transformer(config)(fileModified, undefined, done);
+
+	assert.equal(fileModified[filename].contents.toString(encoding),
+		fileOriginal[filename].contents.toString(),
+		'updated file was encoded using the encoding');
+	assert.equal(doneCalled, true, 'done() was called');
+	assert.equal(err, undefined, 'done was not given an error')
 	assert.end();
 });
